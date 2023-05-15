@@ -1,6 +1,6 @@
 <template>
     <div id="nav">
-        <div class="nav">
+        <div class="nav" @click="backhome">
             <h4>THE&nbsp;&nbsp;&nbsp;FILM&nbsp;&nbsp;&nbsp;PIE</h4>
             <div class="logo">
                 <img src="@/assets/img/logo.png" alt="">
@@ -11,7 +11,13 @@
 
 <script>
 export default {
-
+    methods: {
+        backhome() {
+            if (this.$route.path !== '/') {
+                this.$router.push('/');
+            }
+        }
+    }
 }
 </script>
 

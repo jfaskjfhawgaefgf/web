@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 // import HomeView from '../views/HomeView.vue'
 import Home from '@/views/home.vue'
 import VideoList from '@/views/videolist.vue'
+import Player from '@/views/player.vue'
 
 Vue.use(VueRouter)
 
@@ -21,7 +22,8 @@ const routes = [
   //   component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
   // }
   { path: '/', component: Home },
-  { path: '/videolist', component: VideoList }
+  { path: '/videolist', component: VideoList },
+  { path: '/player/:id', component: Player }
 ]
 
 const router = new VueRouter({
