@@ -7,3 +7,7 @@ export const getVideoList = () => {
 export const getUserList = () => {
     return axios.get('/api/getUserList')
 }
+
+export const getVideoInfo = (uid) => {
+    return axios.get(`/api/getVideo?uid=${uid}`)
+}

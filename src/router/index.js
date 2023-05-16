@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 import Home from '@/views/home.vue'
 import VideoList from '@/views/videolist.vue'
 import Player from '@/views/player.vue'
+import Error from '@/views/error.vue'
 
 Vue.use(VueRouter)
 
@@ -23,6 +24,7 @@ const routes = [
   // }
   { path: '/', component: Home },
   { path: '/videolist', component: VideoList },
+  { path: '/error', component: Error },
   { path: '/player/:id', component: Player }
 ]
 

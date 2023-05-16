@@ -11,28 +11,30 @@
                 <div class="data">
                     <div class="visit">&#xe622;<p>{{ videoInfo.visit }}</p>
                     </div>
-                    <div class="download" @click="downloadvideo">&#xe600;<p>{{ videoInfo.download }}</p>
-                    </div>
+                    <a href="javascript:;" @click="downloadBtn">
+                        <div class="download">&#xe600;<p>{{ videoInfo.download }}</p>
+                        </div>
+                    </a>
                     <div class="score" onclick="alert('敬请期待')">&#xe623;<p>{{ videoInfo.score }}</p>
                     </div>
                 </div>
                 <div class="info">
                     <div>影片介绍</div>
-                    <p>介绍内容介绍内容介绍内容介绍内容介绍内容</p>
+                    <p>{{ videoInfo.info }}</p>
                 </div>
             </div>
 
 
             <div class="right">
                 <ul>
-                    <!-- <li v-for="item in filteredUserList" :key="item.uid">
+                    <li v-for="item in videoInfo.user" :key="item.key">
                         <div class="pic">
                             <img :src="item.pic" alt="">
                         </div>
                         <div class="work">{{ item.works }}</div>
                         <div class="name">{{ item.uname }}</div>
                         <div class="info">{{ item.info }}</div>
-                    </li> -->
+                    </li>
                 </ul>
             </div>
         </div>
@@ -40,38 +42,42 @@
 </template>
 
 <script>
-import { getVideoList, getUserList } from '@/api/getInfo'
-
+import { getVideoInfo } from '@/api/getInfo'
+import { addVisit, addDownload } from '@/api/pushInfo'
 export default {
     data() {
         return {
-            videoInfo: null,
-            userList: null
+            videoInfo: {}
         }
     },
     methods: {
-        async getVideo() {
-            const { data: res } = await getVideoList()
-            res.data.forEach(e => {
-                if (e.uid == this.$route.params.id) {
-                    this.videoInfo = e
-                }
-            })
-
+        async getVideoInfos() {
+            const { data: req } = await getVideoInfo(this.$route.params.id)
+            // console.log(req);
+            if (!req.status || !req) {
+                return this.$router.push(`/error?from=servererror&uid=${this.$route.params.id}`)
+            }
+            if (req.status != 200) {
+                return this.$router.push(`/error?from=novideo&uid=${this.$route.params.id}`)
+            }
+            this.videoInfo = req.data
         },
-        downloadvideo() {
+        downloadBtn() {
+            this.addDownloads()
             window.open(this.videoInfo.src)
         },
-        async getUser() {
-            const { data: res } = await getUserList()
-            this.userList = res.data
+        addVisits() {
+            addVisit(this.$route.params.id)
         },
+        addDownloads() {
+            addDownload(this.$route.params.id)
+        }
 
 
     },
-    async created() {
-        await this.getVideo()
-        await this.getUser()
+    created() {
+        this.getVideoInfos()
+        this.addVisits()
     },
 
 
@@ -87,6 +93,16 @@ export default {
 
 li {
     list-style: none;
+}
+
+a {
+    color: #000;
+    text-decoration: none;
+
+    &:visit {
+        color: #000
+    }
+
 }
 
 @font-face {

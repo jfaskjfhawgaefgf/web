@@ -55,6 +55,7 @@ li {
 
     ul {
         display: flex;
+        max-width: 1500px;
         flex-wrap: wrap;
         justify-content: space-around;
 
