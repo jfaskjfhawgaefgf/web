@@ -57,6 +57,7 @@ li {
         display: flex;
         max-width: 1500px;
         flex-wrap: wrap;
+        margin: 0 auto;
         justify-content: space-around;
 
         li {
