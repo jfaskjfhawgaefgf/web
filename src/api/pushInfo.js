@@ -7,3 +7,7 @@ export const addVisit = (uid) => {
 export const addDownload = (uid) => {
     return axios.get(`/api/addDownload?uid=${uid}`)
 }
+
+export const addScore = (uid, score) => {
+    return axios.get(`/api/addScore?uid=${uid}&score=${score}`)
+}

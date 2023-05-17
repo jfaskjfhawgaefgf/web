@@ -1,5 +1,13 @@
 <template>
     <div id="player">
+        <el-dialog title="评价" :visible.sync="scoreWindows" width="30%" :before-close="handleClose">
+            <span>评分</span>
+            <el-rate v-model="yourScore" show-score></el-rate>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="scoreWindows = false">取 消</el-button>
+                <el-button type="primary" @click="addScores" :loading=okbtnLoad>确 定</el-button>
+            </span>
+        </el-dialog>
         <!-- {{ $route.params.id }} -->
         <div class="box">
             <div class="left">
@@ -15,8 +23,11 @@
                         <div class="download">&#xe600;<p>{{ videoInfo.download }}</p>
                         </div>
                     </a>
-                    <div class="score" onclick="alert('敬请期待')">&#xe623;<p>{{ videoInfo.score }}</p>
-                    </div>
+                    <a href="javascript:;" @click="scoreWindows = true">
+                        <div class="score">&#xe623;<p><el-rate v-model="videoInfo.score" class="pf" disabled></el-rate>
+                            </p>
+                        </div>
+                    </a>
                 </div>
                 <div class="info">
                     <div>影片介绍</div>
@@ -43,12 +54,16 @@
 
 <script>
 import { getVideoInfo } from '@/api/getInfo'
-import { addVisit, addDownload } from '@/api/pushInfo'
+import { addVisit, addDownload, addScore } from '@/api/pushInfo'
 export default {
     data() {
         return {
             videoInfo: {},
-            TipsInfo: ''
+            TipsInfo: '',
+            loading: null,
+            yourScore: null,
+            scoreWindows: false,
+            okbtnLoad: false
         }
     },
     methods: {
@@ -66,6 +81,7 @@ export default {
                 return this.$router.push(`/error?from=novideo&uid=${this.$route.params.id}`)
             }
             this.videoInfo = req.data
+            this.loading.close()
         },
         downloadBtn() {
             this.addDownloads()
@@ -84,10 +100,55 @@ export default {
                 showClose: false,
                 offset: 100
             });
-        }
+        },
+        openFullScreen2() {
+            const loading = this.$loading({
+                lock: true,
+                text: 'Loading',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.7)'
+            })
+            this.loading = loading
+        },
+        handleClose(done) {
+            this.$confirm('确认关闭？')
+                .then(_ => {
+                    done();
+                })
+                .catch(_ => { });
+        },
+        async addScores() {
+            if (this.yourScore > 5 || this.yourScore < 1) {
+                this.TipsInfo = '评分需在1~5之间！'
+                this.openTips()
+                return
+            }
+            this.okbtnLoad = true
+            const { data: res } = await addScore(this.videoInfo.uid, this.yourScore)
+            if (res.status == 200) {
+                this.okbtnLoad = false
+                this.scoreWindows = false
+                this.tjsuccess()
+                return
+            }
+            this.TipsInfo = res.msg
+            this.openTips()
+            this.okbtnLoad = false
+
+        },
+        tjsuccess() {
+            this.$message({
+                message: '提交成功',
+                type: 'success'
+            });
+        },
+
+
+
 
     },
     created() {
+        this.openFullScreen2()
         this.getVideoInfos()
         this.addVisits()
     },
@@ -249,5 +310,9 @@ a {
             width: 10px;
         }
     }
+}
+
+.pf {
+    vertical-align: top;
 }
 </style>
