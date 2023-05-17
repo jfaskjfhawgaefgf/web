@@ -47,7 +47,8 @@ import { addVisit, addDownload } from '@/api/pushInfo'
 export default {
     data() {
         return {
-            videoInfo: {}
+            videoInfo: {},
+            TipsInfo: ''
         }
     },
     methods: {
@@ -55,9 +56,13 @@ export default {
             const { data: req } = await getVideoInfo(this.$route.params.id)
             // console.log(req);
             if (!req.status || !req) {
+                this.TipsInfo = '服务器错误'
+                this.openTips()
                 return this.$router.push(`/error?from=servererror&uid=${this.$route.params.id}`)
             }
             if (req.status != 200) {
+                this.TipsInfo = '视频不存在'
+                this.openTips()
                 return this.$router.push(`/error?from=novideo&uid=${this.$route.params.id}`)
             }
             this.videoInfo = req.data
@@ -71,8 +76,15 @@ export default {
         },
         addDownloads() {
             addDownload(this.$route.params.id)
+        },
+        openTips() {
+            this.$notify.error({
+                title: '错误',
+                message: this.TipsInfo,
+                showClose: false,
+                offset: 100
+            });
         }
-
 
     },
     created() {
