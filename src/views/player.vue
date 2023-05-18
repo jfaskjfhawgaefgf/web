@@ -160,7 +160,7 @@ export default {
 <style lang="less" scoped>
 * {
     margin: 0;
-    padding: 0;
+    // padding: 0;
     box-sizing: border-box;
 }
 
@@ -314,5 +314,9 @@ a {
 
 .pf {
     vertical-align: top;
+}
+
+.score :deep(.el-rate__item) {
+    cursor: pointer !important;
 }
 </style>
